@@ -1,6 +1,37 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
+scaleNames = {
+    'c' : 'Celcius',
+    'f' : 'Fahrenheit'
+};
+
+class TemperatureInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.state = {temperature: ''}
+    }
+
+    handleChange(e) {
+        this.setState({temperature: e.target.value});
+    }
+
+    render() {
+        const temperature = this.state.temperature;
+        const scale = this.props.scale;
+
+        return (
+            <fieldset>
+                <legend>Enter temperature in {scaleNames.[scale]}:</legend>
+                <input
+                    value={temperature}
+                    onChange={this.handleChange} />
+            </fieldset>
+        );
+    }
+}
+
 function BoilingVerdict(props) {
     if (props.celcius >= 100) {
         return <p>the water is boil.</p>
@@ -9,27 +40,12 @@ function BoilingVerdict(props) {
 }
 
 class Calculator extends React.Component {
-    constructor(props) {
-        super(props);
-        this.HandleChange = this.HandleChange.bind(this);
-        this.state = {temperature: ''}
-    }
-
-    HandleChange(e) {
-        this.setState({temperature: e.target.value});
-    }
-
     render() {
-        const temperature = this.state.temperature;
         return (
-            <fieldset>
-                <legend>Enter temperature in celcius:</legend>
-                <input 
-                    value={temperature}
-                    onChange={this.HandleChange}
-                />
-                <BoilingVerdict celcius={parseFloat(temperature)} />
-            </fieldset>
+            <div>
+                <TemperatureInput scale='c' />
+                <TemperatureInput scale='f' />
+            </div>
         );
     }
 }
