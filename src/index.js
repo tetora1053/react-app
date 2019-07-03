@@ -1,14 +1,18 @@
-import React, {Component} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
+import ChildComponent from './clock';
 
-function tick() {
-  const element = (
-    <div>
-      <h1>Hello, World!</h1>
-      <h2>it is {new Date().toLocaleTimeString()}.</h2>
-    </div>
-  );
-  ReactDOM.render(element, document.getElementById('root'));
+class ParentComponent extends React.Component {
+  render() {
+    return (
+      <div>
+        <ChildComponent />
+      </div>
+    )
+  }
 }
 
-setInterval(tick, 1000);
+ReactDOM.render(
+  <ParentComponent />,
+  document.getElementById('root')
+);
