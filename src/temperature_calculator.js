@@ -10,15 +10,14 @@ class TemperatureInput extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
-        this.state = {temperature: ''}
     }
 
     handleChange(e) {
-        this.setState({temperature: e.target.value});
+        this.props.onTemperatureChange(e.target.value);
     }
 
     render() {
-        const temperature = this.state.temperature;
+        const temperature = this.props.temperature;
         const scale = this.props.scale;
 
         return (
@@ -40,11 +39,44 @@ function BoilingVerdict(props) {
 }
 
 class Calculator extends React.Component {
+    constructor(props) {
+        super(props);
+        this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+        this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+        this.state = {
+            temperature: '',
+            scale: 'c'
+        }
+    }
+
+    handleCelsiusChange(temperature) {
+        this.setState({scale: 'c', temperature});
+    }
+
+    handleFahrenheitChange(temperature) {
+        this.setState({scale: 'f', temperature});
+    }
+
     render() {
+        const scale = this.state.scale;
+        const temperature = this.state.temperature;
+        const celcius = scale === 'f' ? tryConvert(temperature, toCelsius) : temperature;
+        const fahrenheit = scale === 'c' ? tryConvert(temperature, toFahrenheit) :temperature;
+
         return (
             <div>
-                <TemperatureInput scale='c' />
-                <TemperatureInput scale='f' />
+                <TemperatureInput
+                    value={celsius};
+                    scale='c'
+                    onTemperatureChange={this.handleCelsiusChange}
+                />
+                <TemperatureInput
+                    scale='f'
+                    onTemperatureChange={this.handleFahrenheitChange}
+                />
+                <BoilingVerdict
+                    celcius={parseFloat(celcius)}
+                />
             </div>
         );
     }
