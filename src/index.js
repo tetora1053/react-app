@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChildComponent from './temperature_calculator';
+import ChildComponent from './welcome_dialog';
 
 class ParentComponent extends React.Component {
   render() {
