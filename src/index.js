@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChildComponent from './welcome_dialog';
+import ChildComponent from './multiple_composition';
 
 class ParentComponent extends React.Component {
   render() {
