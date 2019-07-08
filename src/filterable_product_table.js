@@ -4,26 +4,38 @@ export default class FilterableProductTable extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isShowProductsInStock: false,
+            onlyShowProductsInStock: false,
+            searchStr: '',
         }
         this.SwitchShowProductsInStock = this.SwitchShowProductsInStock.bind(this);
+        this.SearchByName = this.SearchByName.bind(this);
+    }
+
+    SearchByName(e) {
+        this.setState({searchStr: e.target.value});
     }
 
     SwitchShowProductsInStock(e) {
         console.log('checkbox value : ', e.target.checked);
-        this.setState({isShowProductsInStock: e.target.checked});
+        this.setState({onlyShowProductsInStock: e.target.checked});
     }
 
     render() {
-        console.log(this.props.products);
         let products = this.props.products;
-        if (this.state.isShowProductsInStock) {
-            console.log(111);
+        if (this.state.onlyShowProductsInStock) {
             products = products.filter((product) => {return product.stocked;});
+        }
+        if (this.state.searchStr !== '') {
+            products = products.filter((product) => {
+                console.log(product.name);
+                if (product.name.toUpperCase().indexOf(this.state.searchStr.toUpperCase()) === 0) {
+                    return true;
+                }
+            });
         }
         return (
             <div>
-                <SearchBar switchShowProductsInStock={this.SwitchShowProductsInStock} />
+                <SearchBar searchByName={this.SearchByName} switchShowProductsInStock={this.SwitchShowProductsInStock} />
                 <ProductTable products={products}/>
             </div>
         );
@@ -38,7 +50,7 @@ class SearchBar extends React.Component {
     render () {
         return (
             <form>
-                <input type="text" placeholder="Search..." />
+                <input type="text" placeholder="Search..." onChange={this.props.searchByName}/>
                 <p>
                     <label>
                         <input type="checkbox" onChange={this.props.switchShowProductsInStock}/>
