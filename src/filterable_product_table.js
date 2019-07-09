@@ -6,9 +6,11 @@ export default class FilterableProductTable extends React.Component {
         this.state = {
             onlyShowProductsInStock: false,
             searchStr: '',
+            orderBy: 'name',
         }
         this.SwitchShowProductsInStock = this.SwitchShowProductsInStock.bind(this);
         this.SearchByName = this.SearchByName.bind(this);
+        this.ChangeOrderBy = this.ChangeOrderBy.bind(this);
     }
 
     SearchByName(e) {
@@ -16,8 +18,11 @@ export default class FilterableProductTable extends React.Component {
     }
 
     SwitchShowProductsInStock(e) {
-        console.log('checkbox value : ', e.target.checked);
         this.setState({onlyShowProductsInStock: e.target.checked});
+    }
+
+    ChangeOrderBy(e) {
+      this.setState({orderBy: e.target.value});
     }
 
     render() {
@@ -25,15 +30,30 @@ export default class FilterableProductTable extends React.Component {
         products = products.sort((a, b) => {
           if (a.category.toUpperCase() < b.category.toUpperCase()) {
             return -1;
-          } else if (a.category > b.category) {
+          } else if (a.category.toUpperCase() > b.category.toUpperCase()) {
             return 1
           } else {
-            if (a.name.toUpperCase() <= b.name.toUpperCase()) {
-              return -1;
-            } else {
-              return 1;
+            switch (this.state.orderBy) {
+              case 'name':
+                if (a.name.toUpperCase() <= b.name.toUpperCase()) {
+                  return -1;
+                } else {
+                  return 1;
+                }
+                break;
+              case 'price':
+                let price_a = /\$(\d+(?:\.\d+)?)/.exec(a.price);
+                price_a = Number(price_a[1]);
+                let price_b = /\$(\d+(?:\.\d+)?)/.exec(b.price);
+                price_b = Number(price_b[1]);
+                if (price_a < price_b) {
+                  return -1;
+                } else if (price_a > price_b) {
+                  return 1
+                }
+                break;
             }
-          }
+          } 
           return 0;
         });
 
@@ -50,7 +70,11 @@ export default class FilterableProductTable extends React.Component {
         }
         return (
             <div>
-                <SearchBar searchByName={this.SearchByName} switchShowProductsInStock={this.SwitchShowProductsInStock} />
+                <SearchBar
+                  searchByName={this.SearchByName}
+                  switchShowProductsInStock={this.SwitchShowProductsInStock}
+                  changeOrderBy={this.ChangeOrderBy}
+                />
                 <ProductTable products={products}/>
             </div>
         );
@@ -73,6 +97,10 @@ class SearchBar extends React.Component {
                         Only show products in stock
                     </label>
                 </p>
+                <select onChange={this.props.changeOrderBy}>
+                  <option value="name">Name</option>
+                  <option value="price">Price</option>
+                </select>
             </form>
         );
     }
