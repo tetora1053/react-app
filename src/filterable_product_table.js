@@ -7,10 +7,12 @@ export default class FilterableProductTable extends React.Component {
             onlyShowProductsInStock: false,
             searchStr: '',
             orderBy: 'name',
+            orderMethod: 'asc',
         }
         this.SwitchShowProductsInStock = this.SwitchShowProductsInStock.bind(this);
         this.SearchByName = this.SearchByName.bind(this);
         this.ChangeOrderBy = this.ChangeOrderBy.bind(this);
+        this.ChangeOrderMethod = this.ChangeOrderMethod.bind(this);
     }
 
     SearchByName(e) {
@@ -25,20 +27,25 @@ export default class FilterableProductTable extends React.Component {
       this.setState({orderBy: e.target.value});
     }
 
+    ChangeOrderMethod(e) {
+      this.setState({orderMethod: e.target.value});
+    }
+
     render() {
         let products = this.props.products;
         products = products.sort((a, b) => {
+          let compare_res = 0;
           if (a.category.toUpperCase() < b.category.toUpperCase()) {
-            return -1;
+             return -1;
           } else if (a.category.toUpperCase() > b.category.toUpperCase()) {
-            return 1
+            return 1;
           } else {
             switch (this.state.orderBy) {
               case 'name':
                 if (a.name.toUpperCase() <= b.name.toUpperCase()) {
-                  return -1;
+                  compare_res = -1;
                 } else {
-                  return 1;
+                  compare_res = 1;
                 }
                 break;
               case 'price':
@@ -47,14 +54,14 @@ export default class FilterableProductTable extends React.Component {
                 let price_b = /\$(\d+(?:\.\d+)?)/.exec(b.price);
                 price_b = Number(price_b[1]);
                 if (price_a < price_b) {
-                  return -1;
+                  compare_res = -1;
                 } else if (price_a > price_b) {
-                  return 1
+                  compare_res = 1;
                 }
                 break;
             }
-          } 
-          return 0;
+          }
+          return (this.state.orderMethod === 'asc') ? compare_res : compare_res * -1;
         });
 
         if (this.state.onlyShowProductsInStock) {
@@ -74,6 +81,7 @@ export default class FilterableProductTable extends React.Component {
                   searchByName={this.SearchByName}
                   switchShowProductsInStock={this.SwitchShowProductsInStock}
                   changeOrderBy={this.ChangeOrderBy}
+                  changeOrderMethod={this.ChangeOrderMethod}
                 />
                 <ProductTable products={products}/>
             </div>
@@ -93,13 +101,17 @@ class SearchBar extends React.Component {
                 <p>
                     <label>
                         <input type="checkbox" onChange={this.props.switchShowProductsInStock}/>
-                        {' '}
+                        &nbsp;
                         Only show products in stock
                     </label>
                 </p>
                 <select onChange={this.props.changeOrderBy}>
-                  <option value="name">Name</option>
-                  <option value="price">Price</option>
+                  <option value="name">商品名</option>
+                  <option value="price">価格</option>
+                </select>&nbsp;
+                <select onChange={this.props.changeOrderMethod}>
+                  <option value="asc">昇順</option>
+                  <option value="desc">降順</option>
                 </select>
             </form>
         );
