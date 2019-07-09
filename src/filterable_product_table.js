@@ -22,6 +22,21 @@ export default class FilterableProductTable extends React.Component {
 
     render() {
         let products = this.props.products;
+        products = products.sort((a, b) => {
+          if (a.category.toUpperCase() < b.category.toUpperCase()) {
+            return -1;
+          } else if (a.category > b.category) {
+            return 1
+          } else {
+            if (a.name.toUpperCase() <= b.name.toUpperCase()) {
+              return -1;
+            } else {
+              return 1;
+            }
+          }
+          return 0;
+        });
+
         if (this.state.onlyShowProductsInStock) {
             products = products.filter((product) => {return product.stocked;});
         }
